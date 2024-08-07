@@ -194,5 +194,4 @@ Yukarıdaki adımları izleyerek backend'i çalıştırın.
 
 ## Demo Video
 
-[![Demo Video](https://img.youtube.com/vi/OqqXZhoEqwM/0.jpg)](https://www.youtube.com/watch?v=OqqXZhoEqwM)
-
+[Demo Video](https://www.youtube.com/watch?v=OqqXZhoEqwM)
