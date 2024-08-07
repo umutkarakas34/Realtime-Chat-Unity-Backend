@@ -150,9 +150,9 @@ The project employs a modular architecture to ensure scalability and maintainabi
 
 **Base URL**
 
-    ```bash
-    http://localhost:3000
-    ```
+   ```bash
+   http://localhost:3000
+   ```
 
 #### 1. **Get Messages**
 
