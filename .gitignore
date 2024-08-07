@@ -1,0 +1,16 @@
+# Node.js
+Backend/node_modules/
+npm-debug.log
+
+# TypeScript
+Backend/*.tsbuildinfo
+
+# Unity
+Frontend/Library/
+Frontend/Temp/
+Frontend/Obj/
+Frontend/Build/
+Frontend/Builds/
+Frontend/Logs/
+Frontend/MemoryCaptures/
+Frontend/UserSettings/
