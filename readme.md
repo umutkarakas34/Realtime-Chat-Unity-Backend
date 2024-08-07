@@ -356,4 +356,6 @@ Follow the steps above to run the backend.
 
 ## Demo Video
 
-[Demo Video](https://www.youtube.com/watch?v=OqqXZhoEqwM)
+### Executable Build
+
+The latest build of the project can be found in the `Build/Windows` directory. This directory contains the executable (.exe) file for the project, which is the latest compiled version ready for use.
