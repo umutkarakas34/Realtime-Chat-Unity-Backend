@@ -9,7 +9,7 @@ Bu proje, Unity tabanlı bir gerçek zamanlı sohbet uygulaması için backend v
 1. [Kurulum](#kurulum)
 2. [Kullanılan Teknolojiler](#kullanılan-teknolojiler)
 3. [Backend Detayları](#backend-detayları)
-4. [Frontend Detayları](#frontend-detayları)
+4. [Unity C# SDK](#unity-c-sdk)
 5. [AWS Üzerinde Dağıtım](#aws-üzerinde-dağıtım)
 6. [Sık Karşılaşılan Sorunlar ve Çözümleri](#sık-karşılaşılan-sorunlar-ve-çözümleri)
 7. [Demo Video](#demo-video)
@@ -132,24 +132,173 @@ Backend'in çalıştırılması için PM2 kullanılır:
 pm2 start src/server.ts --name "chat-backend"
 ```
 
-### Örnek API Endpoints
+### Endpoints
 
-- **Kullanıcı Kaydı:** `POST /register`
-- **Kullanıcı Girişi:** `POST /login`
-- **Mesajları Getirme:** `GET /messages`
+**Base URL**
 
-## Frontend Detayları
+    ```bash
+    http://localhost:3000
+    ```
 
-Unity kullanılarak geliştirilmiş olan frontend, kullanıcıların sohbet edebileceği bir arayüz sağlar. Kullanıcılar, kullanıcı adı ve şifre ile giriş yaparak sohbet odasına katılabilirler. Frontend, WebSocket bağlantısı üzerinden gerçek zamanlı mesaj alışverişi yapar.
+#### 1. **Get Messages**
 
-### Unity Ayarları
+Retrieve all messages from the chat.
 
-1. **Proje Ayarları:**
+- **Endpoint:** `GET /messages`
+- **Success Response:**
+  - **Code:** 200 OK
+  - **Content:**
+    ```json
+    [
+      { "username": "user1", "text": "Hello, world!" },
+      { "username": "user2", "text": "Hi there!" }
+    ]
+    ```
+- **Error Response:**
+  - **Code:** 500 Internal Server Error
+  - **Content:**
+    ```json
+    "Error getting messages"
+    ```
 
-   - Unity projesinde, `Assets/Scripts` klasörü altındaki scriptler kullanılarak oturum yönetimi ve mesajlaşma işlemleri gerçekleştirilir.
+#### 2. **Register User**
 
-2. **WebSocket Bağlantısı:**
-   - `WebSocketClient.cs` dosyasında, WebSocket bağlantısı üzerinden mesajların gönderilmesi ve alınması işlemleri gerçekleştirilir.
+Register a new user.
+
+- **Endpoint:** `POST /register`
+- **Request Body:**
+  ```json
+  {
+    "username": "user1",
+    "password": "password123"
+  }
+  ```
+- **Success Response:**
+  - **Code:** 200 OK
+  - **Content:**
+    ```json
+    "User registered successfully"
+    ```
+- **Error Response:**
+
+  - **Code:** 409 Conflict
+  - **Content:**
+    ```json
+    "Username already exists"
+    ```
+
+- **Code: 500 Internal Server Error**
+  - **Content:**
+    ```json
+    "Error registering user"
+    ```
+
+#### 3. **Login User**
+
+Login User
+
+- **Endpoint:** `POST /login`
+- **Request Body:**
+  ```json
+  {
+    "username": "user1",
+    "password": "password123"
+  }
+  ```
+- **Success Response:**
+  - **Code:** 200 OK
+  - **Content:**
+    ```json
+    {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+      "username": "user1"
+    }
+    ```
+- **Error Response:**
+
+  - **Code:** 401 Unauthorized
+  - **Content:**
+    ```json
+    "Invalid credentials"
+    ```
+
+- **Code: 500 Internal Server Error**
+
+  - **Content:**
+    ```json
+    "Error logging in"
+    ```
+
+## Unity C# SDK
+
+### Kurulum Talimatları
+
+1. **Unity Projenizi Açın:**
+   Unity Editor'ü açın ve projenizi yükleyin.
+
+2. **Proje Dosyalarını İçe Aktarın:**
+   `Assets` klasörü altındaki `Scripts` klasörünü projenize ekleyin.
+
+### API Referansı
+
+Projede bulunan başlıca sınıflar ve metodlar:
+
+- **AuthManager.cs**: Kullanıcı kimlik doğrulama işlemlerini yönetir.
+
+  - **Public Değişkenler:**
+    - `TMP_InputField registerUsernameInput`: Kayıt kullanıcı adı girişi.
+    - `TMP_InputField registerPasswordInput`: Kayıt şifre girişi.
+    - `TMP_InputField registerConfirmPasswordInput`: Kayıt şifre doğrulama girişi.
+    - `Button registerButton`: Kayıt butonu.
+    - `TMP_Text registerFeedbackText`: Kayıt geri bildirim metni.
+    - `TMP_InputField usernameInput`: Giriş kullanıcı adı girişi.
+    - `TMP_InputField passwordInput`: Giriş şifre girişi.
+    - `Button loginButton`: Giriş butonu.
+    - `TMP_Text feedbackText`: Giriş geri bildirim metni.
+    - `GameObject loginPanel`: Giriş paneli.
+    - `GameObject registerPanel`: Kayıt paneli.
+    - `GameObject chatPanel`: Sohbet paneli.
+    - `Button logoutButton`: Çıkış butonu.
+  - **Public Metodlar:**
+    - `Register()`: Kayıt işlemini başlatır.
+    - `Login()`: Giriş işlemini başlatır.
+    - `Logout()`: Çıkış işlemini yapar ve ilgili panelleri günceller.
+
+- **WebSocketClient.cs**: WebSocket bağlantısını yönetir ve mesajların gönderilip alınmasını sağlar.
+
+  - **Public Değişkenler:**
+    - `TMP_InputField messageInputField`: Mesaj girişi.
+    - `Button sendButton`: Mesaj gönder butonu.
+    - `TMP_Text messagesText`: Mesajların görüntülendiği metin alanı.
+    - `ScrollRect scrollRect`: Mesajların kaydırıldığı alan.
+  - **Public Metodlar:**
+    - `StartWebSocketConnection()`: WebSocket bağlantısını başlatır.
+    - `CloseConnection()`: WebSocket bağlantısını kapatır.
+    - `SendMessageToServer(string messageText)`: Mesajı sunucuya gönderir.
+
+- **PanelSwitcher.cs**: Paneller arasında geçiş yapmayı sağlar.
+  - **Public Değişkenler:**
+    - `GameObject loginPanel`: Giriş paneli.
+    - `GameObject registerPanel`: Kayıt paneli.
+    - `GameObject chatPanel`: Sohbet paneli.
+  - **Public Metodlar:**
+    - `ShowLoginPanel()`: Giriş panelini gösterir.
+    - `ShowRegisterPanel()`: Kayıt panelini gösterir.
+    - `ShowChatPanel()`: Sohbet panelini gösterir.
+
+### Detaylı Açıklamalar ve Kullanım Senaryoları
+
+Bu SDK, kullanıcıların Unity tabanlı uygulamalarda gerçek zamanlı sohbet işlevselliği eklemelerine olanak sağlar. Kullanıcılar, bu SDK'yı kullanarak hızlı bir şekilde kayıt olabilir, giriş yapabilir ve mesajlaşabilirler.
+
+#### Kullanım Senaryoları
+
+1. **Gerçek Zamanlı Sohbet Uygulamaları:**
+
+   - Kullanıcıların anlık mesajlaşma ihtiyaçlarını karşılamak için idealdir.
+
+2. **Oyun İçi Sohbet Sistemleri:**
+
+   - Çok oyunculu oyunlarda oyuncuların birbirleriyle iletişim kurmalarını sağlar.
 
 ## AWS Üzerinde Dağıtım
 
@@ -190,7 +339,6 @@ Yukarıdaki adımları izleyerek backend'i çalıştırın.
 
 - PM2 loglarını kontrol edin: `pm2 logs`
 - Gerekli paketlerin yüklü olduğundan emin olun.
-
 
 ## Demo Video
 
