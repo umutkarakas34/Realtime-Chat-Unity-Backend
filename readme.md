@@ -12,6 +12,7 @@ Bu proje, Unity tabanlı bir gerçek zamanlı sohbet uygulaması için backend v
 4. [Frontend Detayları](#frontend-detayları)
 5. [AWS Üzerinde Dağıtım](#aws-üzerinde-dağıtım)
 6. [Sık Karşılaşılan Sorunlar ve Çözümleri](#sık-karşılaşılan-sorunlar-ve-çözümleri)
+7. [Demo Video](#demo-video)
 
 ## Kurulum
 
@@ -189,3 +190,8 @@ Yukarıdaki adımları izleyerek backend'i çalıştırın.
 
 - PM2 loglarını kontrol edin: `pm2 logs`
 - Gerekli paketlerin yüklü olduğundan emin olun.
+
+
+## Demo Video
+
+[Demo Video](https://www.youtube.com/watch?v=OqqXZhoEqwM)
