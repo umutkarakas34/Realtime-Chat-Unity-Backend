@@ -1,72 +1,96 @@
 # Realtime Chat Unity-Backend
 
-## Proje Açıklaması
+## Project Description
 
-Bu proje, Unity tabanlı bir gerçek zamanlı sohbet uygulaması için backend ve frontend bileşenlerini içerir. Backend, TypeScript ile yazılmıştır ve NATS, Redis ve WebSocket teknolojilerini kullanarak gerçek zamanlı mesajlaşma sağlamaktadır. Frontend ise Unity kullanılarak geliştirilmiştir ve WebSocket bağlantısı üzerinden gerçek zamanlı sohbet işlevselliğini destekler.
+This project includes both backend and frontend components for a real-time chat application based on Unity. The backend is written in TypeScript and utilizes NATS, Redis, and WebSocket technologies to enable real-time messaging. The frontend is developed using Unity and supports real-time chat functionality through a WebSocket connection.
 
-## İçindekiler
+## Table of Contents
 
-1. [Kurulum](#kurulum)
-2. [Kullanılan Teknolojiler](#kullanılan-teknolojiler)
-3. [Backend Detayları](#backend-detayları)
+1. [Technologies Used](#technologies-used)
+2. [Installation](#installation)
+3. [Backend Details](#backend-details)
 4. [Unity C# SDK](#unity-c-sdk)
-5. [AWS Üzerinde Dağıtım](#aws-üzerinde-dağıtım)
-6. [Sık Karşılaşılan Sorunlar ve Çözümleri](#sık-karşılaşılan-sorunlar-ve-çözümleri)
+5. [Deployment](#deployment)
+6. [Common Issues and Solutions](#common-issues-and-solutions)
 7. [Demo Video](#demo-video)
 
-## Kurulum
+## Technologies Used
 
-### Gereksinimler
+### TypeScript ve Node.js
+
+TypeScript has been used for backend development in this project. TypeScript provides static type checking, making the code more secure and readable. Node.js provides the runtime environment for the application.
+
+### Redis
+
+Redis is used as the database. User session management and message persistence are handled by Redis. Its fast and efficient data storage capabilities offer advantages in real-time applications.
+
+### NATS
+
+NATS is used as the messaging system. NATS provides high-performance, low-latency messaging and is used for the transmission of real-time messages. For this project, NATS is utilized with a publish/subscribe model to distribute messages.
+
+### WebSocket
+
+WebSocket is used for real-time communication. WebSocket provides bidirectional communication, allowing users to exchange messages instantly.
+
+### Unity
+
+Unity is used for frontend development. Unity is a powerful platform for developing games and interactive content. In this project, Unity is used to create an interface where users can chat in real-time.
+
+## Installation
+
+### Requirements
 
 - Node.js ve npm
 - Redis
 - NATS Server
 - Unity
 
-### Adımlar
+### Steps
 
-#### Backend Kurulumu
+#### Backend Setup
 
-1. **Depoyu klonlayın:**
+**Note: The following instructions are for Linux systems.**
+
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/umutkarakas34/Realtime-Chat-Unity-Backend.git
    cd Realtime-Chat-Unity-Backend/chat-backend
    ```
 
-2. **Gerekli paketleri yükleyin:**
+2. **Install the required packages:**
 
    ```bash
    npm install
    ```
 
-3. **PM2 kullanarak backend'i başlatın:**
+3. **Start the backend using PM2:**
 
    ```bash
    pm2 start src/server.ts --name "chat-backend"
    ```
 
-##### Redis Kurulumu
+##### Redis Installation
 
-**Redis'in kurulumunu ve çalıştırılmasını gerçekleştirin:**
+**Install and run Redis:**
 
-1. **Redis'i yükleyin:**
+1. **Install Redis:**
 
    ```bash
    sudo yum install redis -y
    ```
 
-2. **Redis'i başlatın:**
+2. **Start Redis:**
 
    ```bash
    redis-server &
    ```
 
-##### NATS Kurulumu
+##### NATS Installation
 
-**NATS server'ın kurulumunu ve çalıştırılmasını gerçekleştirin:**
+**Install and run the NATS server:**
 
-1. **NATS'i indirin ve yükleyin:**
+1. **Download and install NATS:**
 
    ```bash
    wget https://github.com/nats-io/nats-server/releases/download/v2.9.2/nats-server-v2.9.2-linux-amd64.tar.gz
@@ -74,63 +98,53 @@ Bu proje, Unity tabanlı bir gerçek zamanlı sohbet uygulaması için backend v
    sudo mv nats-server-v2.9.2-linux-amd64/nats-server /usr/local/bin/
    ```
 
-2. **NATS server'ı başlatın:**
+2. **Start the NATS server:**
 
    ```bash
    nats-server -p 4222 &
    ```
 
-#### Frontend Kurulumu
+#### Frontend
 
-**Unity kullanarak frontend bileşenlerini kurun:**
+**Set up the frontend components using Unity:**
 
-1. **Unity projesini açın:**
+1. **Open the Unity project:**
 
    ```bash
    cd Realtime-Chat-Unity-Backend/unity
    ```
 
-2. **Unity editoründe projeyi açın ve yapılandırın.**
+2. **Open and configure the project in the Unity editor.**
 
-3. **Build işlemini gerçekleştirin.**
+3. **Perform the build process.**
 
-## Kullanılan Teknolojiler
+4. **For more information and integration with the Unity SDK, refer to the [Unity C# SDK](#unity-c-sdk) section.**
 
-### Node.js ve TypeScript
+## Backend Details
 
-Backend geliştirmesi için Node.js kullanılmıştır. TypeScript, statik tip kontrolü sağlar ve kodun daha güvenli ve okunabilir olmasını sağlar.
+### Configuration and Running
 
-### Redis
+The backend is a Node.js application based on Express.js developed with TypeScript and includes the following features:
 
-Redis, veritabanı olarak kullanılmıştır. Kullanıcı oturum yönetimi ve mesajların kalıcılığı Redis ile sağlanmıştır. Redis'in hızlı ve verimli veri saklama özellikleri, gerçek zamanlı uygulamalarda avantaj sağlar.
+- **User Session Management:** Secure session management is provided using JWT.
+- **Real-Time Messaging:** Real-time messaging is enabled using WebSocket and NATS.
+- **Message Persistence:** Message persistence is handled with Redis.
 
-### NATS
-
-NATS, mesajlaşma sistemi olarak kullanılmıştır. NATS, yüksek performanslı, düşük gecikmeli mesajlaşma sağlar ve gerçek zamanlı mesajların iletiminde kullanılır. Bu proje için, NATS yayıncı/abone modeli kullanılarak mesajların dağıtımı sağlanmıştır.
-
-### WebSocket
-
-WebSocket, gerçek zamanlı iletişim için kullanılmıştır. WebSocket, çift yönlü iletişim sağlar ve bu sayede kullanıcılar anlık olarak mesajlaşabilirler.
-
-### Unity
-
-Frontend geliştirmesi için Unity kullanılmıştır. Unity, oyun ve etkileşimli içerik geliştirmek için kullanılan güçlü bir platformdur. Bu proje için, Unity kullanılarak kullanıcıların gerçek zamanlı olarak sohbet edebileceği bir arayüz oluşturulmuştur.
-
-## Backend Detayları
-
-### Yapılandırma ve Çalıştırma
-
-Backend, Express.js tabanlı bir Node.js uygulamasıdır ve aşağıdaki özellikleri içerir:
-
-- **Kullanıcı Oturum Yönetimi:** JWT kullanılarak güvenli oturum yönetimi sağlanır.
-- **Gerçek Zamanlı Mesajlaşma:** WebSocket ve NATS kullanılarak gerçek zamanlı mesajlaşma sağlanır.
-- **Mesajların Kalıcılığı:** Redis ile mesajların kalıcılığı sağlanır.
-
-Backend'in çalıştırılması için PM2 kullanılır:
+To run the backend, use PM2:
 
 ```bash
 pm2 start src/server.ts --name "chat-backend"
 ```
+
+### Architectural Decisions and High Concurrency Management
+
+The project employs a modular architecture to ensure scalability and maintainability. Each component (WebSocket, NATS, Redis) is structured as an independent module, enhancing readability and ease of maintenance.
+
+- **Modular Architecture:** The application is divided into independent modules for WebSocket, NATS, and Redis. This approach ensures better code organization and scalability.
+
+- **High Concurrency Management:** WebSocket connections and messaging via NATS and Redis ensure consistency and reliability under high concurrency. PM2 is used for process management, providing high performance and fault tolerance.
+
+- **Security:** JWT is used for secure session management, and SSL/TLS is employed for WebSocket connections to ensure secure data transmission.
 
 ### Endpoints
 
@@ -231,114 +245,114 @@ Login User
 
 ## Unity C# SDK
 
-### Kurulum Talimatları
+### Installation Instructions
 
-1. **Unity Projenizi Açın:**
-   Unity Editor'ü açın ve projenizi yükleyin.
+1. **Open Your Unity Project:**
+   Open Unity Editor and load your project.
 
-2. **Proje Dosyalarını İçe Aktarın:**
-   `Assets` klasörü altındaki `Scripts` klasörünü projenize ekleyin.
+2. **Import Project Files:**
+   Add the `Scripts` folder under the `Assets` directory to your project.
 
-### API Referansı
+### API Reference
 
-Projede bulunan başlıca sınıflar ve metodlar:
+Main classes and methods in the project:
 
-- **AuthManager.cs**: Kullanıcı kimlik doğrulama işlemlerini yönetir.
-
-  - **Public Değişkenler:**
-    - `TMP_InputField registerUsernameInput`: Kayıt kullanıcı adı girişi.
-    - `TMP_InputField registerPasswordInput`: Kayıt şifre girişi.
-    - `TMP_InputField registerConfirmPasswordInput`: Kayıt şifre doğrulama girişi.
-    - `Button registerButton`: Kayıt butonu.
-    - `TMP_Text registerFeedbackText`: Kayıt geri bildirim metni.
-    - `TMP_InputField usernameInput`: Giriş kullanıcı adı girişi.
-    - `TMP_InputField passwordInput`: Giriş şifre girişi.
-    - `Button loginButton`: Giriş butonu.
-    - `TMP_Text feedbackText`: Giriş geri bildirim metni.
-    - `GameObject loginPanel`: Giriş paneli.
-    - `GameObject registerPanel`: Kayıt paneli.
-    - `GameObject chatPanel`: Sohbet paneli.
-    - `Button logoutButton`: Çıkış butonu.
-  - **Public Metodlar:**
-    - `Register()`: Kayıt işlemini başlatır.
-    - `Login()`: Giriş işlemini başlatır.
-    - `Logout()`: Çıkış işlemini yapar ve ilgili panelleri günceller.
-
-- **WebSocketClient.cs**: WebSocket bağlantısını yönetir ve mesajların gönderilip alınmasını sağlar.
+- **AuthManager.cs**: Manages user authentication processes.
 
   - **Public Değişkenler:**
-    - `TMP_InputField messageInputField`: Mesaj girişi.
-    - `Button sendButton`: Mesaj gönder butonu.
-    - `TMP_Text messagesText`: Mesajların görüntülendiği metin alanı.
-    - `ScrollRect scrollRect`: Mesajların kaydırıldığı alan.
+    - `TMP_InputField registerUsernameInput`: Username input for registration.
+    - `TMP_InputField registerPasswordInput`: Password input for registration.
+    - `TMP_InputField registerConfirmPasswordInput`: Password confirmation input for registration.
+    - `Button registerButton`: Registration button.
+    - `TMP_Text registerFeedbackText`: Feedback text for registration.
+    - `TMP_InputField usernameInput`: Username input for login.
+    - `TMP_InputField passwordInput`: Password input for login.
+    - `Button loginButton`: Login button.
+    - `TMP_Text feedbackText`: Feedback text for login.
+    - `GameObject loginPanel`: Login panel.
+    - `GameObject registerPanel`: Registration panel.
+    - `GameObject chatPanel`: Chat panel.
+    - `Button logoutButton`: Logout button.
   - **Public Metodlar:**
-    - `StartWebSocketConnection()`: WebSocket bağlantısını başlatır.
-    - `CloseConnection()`: WebSocket bağlantısını kapatır.
-    - `SendMessageToServer(string messageText)`: Mesajı sunucuya gönderir.
+    - `Register()`: Initiates the registration process.
+    - `Login()`: Initiates the login process.
+    - `Logout()`: Logs out and updates the relevant panels.
 
-- **PanelSwitcher.cs**: Paneller arasında geçiş yapmayı sağlar.
+- **WebSocketClient.cs**: Manages the WebSocket connection and handles message sending and receiving.
+
   - **Public Değişkenler:**
-    - `GameObject loginPanel`: Giriş paneli.
-    - `GameObject registerPanel`: Kayıt paneli.
-    - `GameObject chatPanel`: Sohbet paneli.
+    - `TMP_InputField messageInputField`: Message input field.
+    - `Button sendButton`: Send message button.
+    - `TMP_Text messagesText`: Text area where messages are displayed.
+    - `ScrollRect scrollRect`: Area where messages are scrolled.
   - **Public Metodlar:**
-    - `ShowLoginPanel()`: Giriş panelini gösterir.
-    - `ShowRegisterPanel()`: Kayıt panelini gösterir.
-    - `ShowChatPanel()`: Sohbet panelini gösterir.
+    - `StartWebSocketConnection()`: Starts the WebSocket connection.
+    - `CloseConnection()`: Closes the WebSocket connection.
+    - `SendMessageToServer(string messageText)`: Sends a message to the server.
 
-### Detaylı Açıklamalar ve Kullanım Senaryoları
+- **PanelSwitcher.cs**: Allows switching between panels.
+  - **Public Değişkenler:**
+    - `GameObject loginPanel`: Login panel.
+    - `GameObject registerPanel`: Registration panel.
+    - `GameObject chatPanel`: Chat panel.
+  - **Public Metodlar:**
+    - `ShowLoginPanel()`: Shows the login panel.
+    - `ShowRegisterPanel()`: Shows the registration panel.
+    - `ShowChatPanel()`: Shows the chat panel.
 
-Bu SDK, kullanıcıların Unity tabanlı uygulamalarda gerçek zamanlı sohbet işlevselliği eklemelerine olanak sağlar. Kullanıcılar, bu SDK'yı kullanarak hızlı bir şekilde kayıt olabilir, giriş yapabilir ve mesajlaşabilirler.
+### Detailed Explanations and Use Cases
 
-#### Kullanım Senaryoları
+This SDK enables users to add real-time chat functionality to Unity-based applications. Users can quickly register, log in, and chat using this SDK.
 
-1. **Gerçek Zamanlı Sohbet Uygulamaları:**
+#### Use Cases
 
-   - Kullanıcıların anlık mesajlaşma ihtiyaçlarını karşılamak için idealdir.
+1. **Real-Time Chat Applications:**
 
-2. **Oyun İçi Sohbet Sistemleri:**
+   - Ideal for meeting the needs of instant messaging.
 
-   - Çok oyunculu oyunlarda oyuncuların birbirleriyle iletişim kurmalarını sağlar.
+2. **In-Game Chat Systems:**
 
-## AWS Üzerinde Dağıtım
+   - Facilitates communication among players in multiplayer games.
 
-Bu proje, AWS EC2 üzerinde dağıtılabilir. Ancak, bu adımlar isteğe bağlıdır ve kullanıcılar projeyi yerel ortamlarında da çalıştırabilirler.
+## Deployment
 
-### AWS Üzerinde Dağıtım Adımları
+This project can be deployed on AWS EC2. However, these steps are optional, and users can also run the project on their local environments.
 
-#### EC2 Sunucusu Oluşturun:
+### AWS Deployment Steps
 
-AWS Management Console üzerinden yeni bir EC2 instance oluşturun.
+#### Create an EC2 Instance:
 
-#### Güvenlik Gruplarını Yapılandırın:
+Create a new EC2 instance through the AWS Management Console.
 
-Gerekli portları (3000, 6379, 4222) güvenlik grubunuza ekleyin.
+#### Configure Security Groups:
 
-#### Sunucuya Bağlanın:
+Add the necessary ports (3000, 6379, 4222) to your security group.
 
-SSH kullanarak EC2 instance'a bağlanın.
+#### Connect to the Server:
 
-#### Gerekli Yazılımları Yükleyin ve Yapılandırın:
+Connect to your EC2 instance using SSH.
 
-Node.js, Redis ve NATS'i yükleyin.
-Yukarıdaki adımları izleyerek backend'i çalıştırın.
+#### Install and Configure Required Software:
 
-## Sık Karşılaşılan Sorunlar ve Çözümleri
+Install Node.js, Redis, and NATS.
+Follow the steps above to run the backend.
 
-### Bağlantı Hataları:
+## Common Issues and Solutions
 
-- Redis ve NATS'in çalıştığından emin olun.
-- Güvenlik grubu ayarlarını kontrol edin.
+### Connection Errors:
 
-### Unity ile Bağlantı Sorunları:
+- Ensure that Redis and NATS are running.
+- Check the security group settings.
 
-- Backend URL'sinin doğru olduğundan emin olun.
-- WebSocket bağlantılarının doğru çalıştığını kontrol edin.
+### Unity Connection Issues:
 
-### Sunucu Hataları:
+- Verify that the backend URL is correct.
+- Check that WebSocket connections are working properly.
 
-- PM2 loglarını kontrol edin: `pm2 logs`
-- Gerekli paketlerin yüklü olduğundan emin olun.
+### Server Errors:
+
+- Check PM2 logs: `pm2 logs`
+- Ensure that all required packages are installed.
 
 ## Demo Video
 
