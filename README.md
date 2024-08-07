@@ -360,4 +360,4 @@ Follow the steps above to run the backend.
 
 ### Executable Build
 
-The latest build of the project can be found in the `Build/Windows` directory. This directory contains the executable (.exe) file for the project, which is the latest compiled version ready for use.
+The latest build of the project can be found in the `Build/Windows` directory. This directory contains the executable (`RealTimeChat.exe`) file for the project, which is the latest compiled version ready for use.
