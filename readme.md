@@ -194,4 +194,5 @@ Yukarıdaki adımları izleyerek backend'i çalıştırın.
 
 ## Demo Video
 
-[Demo Video](<iframe width="884" height="708" src="https://www.youtube.com/embed/OqqXZhoEqwM" title="demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>)
+[![Demo Video](https://img.youtube.com/vi/OqqXZhoEqwM/0.jpg)](https://www.youtube.com/watch?v=OqqXZhoEqwM)
+
