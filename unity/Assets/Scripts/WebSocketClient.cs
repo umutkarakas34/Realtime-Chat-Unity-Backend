@@ -9,42 +9,60 @@ using UnityEngine.Networking;
 
 public class WebSocketClient : MonoBehaviour
 {
+    // Singleton instance
     private static WebSocketClient instance;
+
+    // WebSocket instance
     private WebSocket ws;
+
+    // UI elements for message input and display
     public TMP_InputField messageInputField;
     public Button sendButton;
     public TMP_Text messagesText;
     public ScrollRect scrollRect;
 
+    // WebSocket server URL
     private string wsUrl = "ws://107.23.110.166:3000";
+
+    // Username of the current user
     private string username;
+
+    // Dictionary to store colors for each user
     private Dictionary<string, Color> userColors = new Dictionary<string, Color>();
-    private HashSet<string> receivedMessages = new HashSet<string>(); // Eklenen mesajlarý takip etmek için
-    private bool isFirstConnection = true; // Ýlk baðlantý kontrolü
+
+    // HashSet to track received messages
+    private HashSet<string> receivedMessages = new HashSet<string>();
+
+    // Flag to check first connection
+    private bool isFirstConnection = true;
 
     void Awake()
     {
+        // Initialize the singleton instance
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // Persist this instance between scenes
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Destroy duplicate instances
         }
     }
 
+    // Property to get the singleton instance
     public static WebSocketClient Instance
     {
         get { return instance; }
     }
 
+    // Start the WebSocket connection
     public void StartWebSocketConnection()
     {
         StartCoroutine(GetUsernameFromServer());
     }
 
+    // Coroutine to get the username from the server using the stored token
     IEnumerator GetUsernameFromServer()
     {
         string token = PlayerPrefs.GetString("userToken", "");
@@ -69,10 +87,11 @@ public class WebSocketClient : MonoBehaviour
             PlayerPrefs.SetString("username", username);
             PlayerPrefs.Save();
 
-            Connect();
+            Connect(); // Establish the WebSocket connection
         }
     }
 
+    // Connect to the WebSocket server
     void Connect()
     {
         ws = new WebSocket(wsUrl);
@@ -84,7 +103,7 @@ public class WebSocketClient : MonoBehaviour
             if (isFirstConnection)
             {
                 StartCoroutine(LoadExistingMessages());
-                isFirstConnection = false; // Ýlk baðlantýdan sonra false yap
+                isFirstConnection = false;
             }
         };
 
@@ -114,6 +133,7 @@ public class WebSocketClient : MonoBehaviour
         ws.Connect();
     }
 
+    // Coroutine to load existing messages from the server
     IEnumerator LoadExistingMessages()
     {
         UnityWebRequest request = UnityWebRequest.Get("http://107.23.110.166:3000/messages");
@@ -129,24 +149,26 @@ public class WebSocketClient : MonoBehaviour
             foreach (var message in messages)
             {
                 string messageJson = JsonConvert.SerializeObject(message);
-                if (!receivedMessages.Contains(messageJson)) // Mesajýn zaten eklenmiþ olup olmadýðýný kontrol et
+                if (!receivedMessages.Contains(messageJson))
                 {
                     AddMessageToUI(messageJson);
-                    receivedMessages.Add(messageJson); // Mesajý eklenenler listesine ekle
+                    receivedMessages.Add(messageJson);
                 }
             }
         }
     }
 
+    // Close the WebSocket connection
     public void CloseConnection()
     {
         if (ws != null)
         {
             ws.Close();
-            ws = null; // WebSocket baðlantýsýný serbest býrak
+            ws = null; // Release the WebSocket instance
         }
     }
 
+    // Send a message to the WebSocket server
     public void SendMessageToServer(string messageText)
     {
         Debug.Log("Sending message to server...");
@@ -183,6 +205,7 @@ public class WebSocketClient : MonoBehaviour
         }
     }
 
+    // Add a received message to the UI
     void AddMessageToUI(string messageJson)
     {
         var message = JsonConvert.DeserializeObject<Message>(messageJson);
@@ -206,7 +229,7 @@ public class WebSocketClient : MonoBehaviour
             Canvas.ForceUpdateCanvases();
             if (scrollRect != null)
             {
-                scrollRect.verticalNormalizedPosition = 0f; // En alta kaydýr
+                scrollRect.verticalNormalizedPosition = 0f; // Scroll to the bottom
             }
         }
         else
@@ -215,6 +238,7 @@ public class WebSocketClient : MonoBehaviour
         }
     }
 
+    // Get a random color
     private Color GetRandomColor()
     {
         Color[] colors = {
@@ -245,12 +269,14 @@ public class WebSocketClient : MonoBehaviour
         return colors[randomIndex];
     }
 
+    // Close WebSocket connection when the script is destroyed
     void OnDestroy()
     {
         CloseConnection();
-        ws = null; // WebSocket baðlantýsýný serbest býrak
+        ws = null; // Release the WebSocket instance
     }
 
+    // Class to represent a chat message
     [System.Serializable]
     public class Message
     {
@@ -258,6 +284,7 @@ public class WebSocketClient : MonoBehaviour
         public string text;
     }
 
+    // Class to represent the username response
     [System.Serializable]
     public class UsernameResponse
     {

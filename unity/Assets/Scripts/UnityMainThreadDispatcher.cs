@@ -5,10 +5,13 @@ using UnityEngine;
 
 public class UnityMainThreadDispatcher : MonoBehaviour
 {
+    // Queue to hold actions to be executed on the main thread
     private static readonly Queue<Action> _executionQueue = new Queue<Action>();
 
+    // Update is called once per frame
     public void Update()
     {
+        // Execute all queued actions
         lock (_executionQueue)
         {
             while (_executionQueue.Count > 0)
@@ -18,6 +21,7 @@ public class UnityMainThreadDispatcher : MonoBehaviour
         }
     }
 
+    // Enqueue an action to be executed on the main thread
     public static void Enqueue(Action action)
     {
         lock (_executionQueue)
@@ -26,13 +30,16 @@ public class UnityMainThreadDispatcher : MonoBehaviour
         }
     }
 
+    // Singleton instance
     private static UnityMainThreadDispatcher _instance = null;
 
+    // Check if the instance exists
     public static bool Exists()
     {
         return _instance != null;
     }
 
+    // Get the instance of UnityMainThreadDispatcher
     public static UnityMainThreadDispatcher Instance()
     {
         if (!Exists())
@@ -42,16 +49,17 @@ public class UnityMainThreadDispatcher : MonoBehaviour
         return _instance;
     }
 
+    // Awake is called when the script instance is being loaded
     void Awake()
     {
         if (_instance == null)
         {
             _instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(gameObject); // Persist this instance between scenes
         }
         else
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Destroy duplicate instances
         }
     }
 }

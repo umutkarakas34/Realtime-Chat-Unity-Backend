@@ -150,7 +150,7 @@ The project employs a modular architecture to ensure scalability and maintainabi
 
 **Base URL**
 
-    ```bash
+    ```url
     http://localhost:3000
     ```
 

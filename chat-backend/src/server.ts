@@ -18,9 +18,9 @@ interface IUser {
 }
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 const wsUrl = "ws://localhost:3000";
-const jwtSecret = process.env.JWT_SECRET || 'defaultSecret'; // Güvenlik için çevresel değişken kullanın
+const jwtSecret = process.env.JWT_SECRET || 'defaultSecret'; // Use environment variable for security
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -50,6 +50,7 @@ const wss = new WebSocketServer({ server });
 
 (async () => {
     try {
+        // Connect to NATS and Redis
         natsConnection = await connect({ servers: "nats://localhost:4222" });
         await redisClient.connect();
         console.log("Connected to Redis and NATS");
@@ -69,9 +70,10 @@ const wss = new WebSocketServer({ server });
                     }
                 });
             },
-            queue: 'message_queue' // Mesaj sırasının korunması için bir kuyruk kullanın
+            queue: 'message_queue' // Use a queue to preserve message order
         };
 
+        // Subscribe to the NATS topic
         await natsConnection.subscribe("chat.messages", subOptions);
 
         server.listen(port, () => {
@@ -109,7 +111,7 @@ wss.on('connection', (ws: WebSocket) => {
     });
 });
 
-// Mevcut mesajları çeken endpoint
+// Endpoint to retrieve existing messages
 app.get('/messages', async (req: Request, res: Response) => {
     try {
         const messages = await redisClient.lRange('messages', 0, -1);
@@ -120,7 +122,7 @@ app.get('/messages', async (req: Request, res: Response) => {
     }
 });
 
-// Yeniden bağlanma işlevi
+// Function to handle WebSocket reconnection
 function connectWebSocket() {
     const ws = new WebSocket(wsUrl);
 
@@ -155,7 +157,7 @@ function connectWebSocket() {
     });
 }
 
-// Kullanıcı Kayıt İşlemi
+// User registration endpoint
 app.post('/register', async (req: Request, res: Response) => {
     const { username, password }: IUser = req.body;
 
@@ -174,7 +176,7 @@ app.post('/register', async (req: Request, res: Response) => {
     }
 });
 
-// Kullanıcı Giriş İşlemi
+// User login endpoint
 app.post('/login', async (req: Request, res: Response) => {
     const { username, password }: IUser = req.body;
 
@@ -192,7 +194,7 @@ app.post('/login', async (req: Request, res: Response) => {
     }
 });
 
-// Kullanıcı adını döndüren endpoint
+// Endpoint to return the username from the token
 app.get('/username', async (req: Request, res: Response) => {
     const token = req.headers.authorization?.split(' ')[1];
 
@@ -209,7 +211,7 @@ app.get('/username', async (req: Request, res: Response) => {
     }
 });
 
-// Tüm kullanıcıları çeken route
+// Endpoint to get all users
 app.get('/get-all-users', async (req: Request, res: Response) => {
     try {
         const users = await redisClient.hKeys('users');

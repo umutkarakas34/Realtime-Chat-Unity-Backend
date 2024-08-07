@@ -6,33 +6,39 @@ using UnityEngine.Networking;
 
 public class AuthManager : MonoBehaviour
 {
+    // UI elements for registration
     public TMP_InputField registerUsernameInput;
     public TMP_InputField registerPasswordInput;
     public TMP_InputField registerConfirmPasswordInput;
     public Button registerButton;
     public TMP_Text registerFeedbackText;
 
+    // UI elements for login
     public TMP_InputField usernameInput;
     public TMP_InputField passwordInput;
     public Button loginButton;
     public TMP_Text feedbackText;
 
+    // Panels for UI management
     public GameObject loginPanel;
     public GameObject registerPanel;
     public GameObject chatPanel;
     public Button logoutButton;
 
-    private string baseUrl = "http://107.23.110.166:3000"; // Node.js sunucunuzun adresi
+    // Base URL for Node.js server
+    private string baseUrl = "http://107.23.110.166:3000";
 
     void Start()
     {
-
+        // Add listeners to buttons
         registerButton.onClick.AddListener(Register);
         loginButton.onClick.AddListener(Login);
         logoutButton.onClick.AddListener(Logout);
-        chatPanel.SetActive(false); // Baþlangýçta chatPanel'i gizle
-        loginPanel.SetActive(true); // Baþlangýçta loginPanel'i aktif yap
-        registerPanel.SetActive(false); // Baþlangýçta registerPanel'i gizle
+
+        // Initialize UI panels
+        chatPanel.SetActive(false); // Hide chatPanel initially
+        loginPanel.SetActive(true); // Show loginPanel initially
+        registerPanel.SetActive(false); // Hide registerPanel initially
     }
 
     void Register()
@@ -40,6 +46,7 @@ public class AuthManager : MonoBehaviour
         string password = registerPasswordInput.text;
         string confirmPassword = registerConfirmPasswordInput.text;
 
+        // Check if passwords match
         if (password != confirmPassword)
         {
             registerFeedbackText.text = "Passwords do not match!";
@@ -56,10 +63,15 @@ public class AuthManager : MonoBehaviour
 
     void Logout()
     {
+        // Clear stored user data
         PlayerPrefs.DeleteAll();
         PlayerPrefs.Save();
+
+        // Show login UI
         ShowLoginUI();
-        WebSocketClient.Instance.CloseConnection(); // WebSocket baðlantýsýný kapat
+
+        // Close WebSocket connection
+        WebSocketClient.Instance.CloseConnection();
     }
 
     IEnumerator RegisterCoroutine()
@@ -70,7 +82,7 @@ public class AuthManager : MonoBehaviour
         form.AddField("username", username);
         form.AddField("password", password);
 
-       if(registerConfirmPasswordInput.text == registerPasswordInput.text)
+        if (registerConfirmPasswordInput.text == registerPasswordInput.text)
         {
             using (UnityWebRequest www = UnityWebRequest.Post(baseUrl + "/register", form))
             {
@@ -80,7 +92,7 @@ public class AuthManager : MonoBehaviour
                 {
                     registerFeedbackText.text = "Server Error!";
                 }
-                else if (www.responseCode == 409) // Kullanýcý adý zaten mevcut
+                else if (www.responseCode == 409) // Username already exists
                 {
                     registerFeedbackText.text = "Username already exists!";
                 }
@@ -113,7 +125,7 @@ public class AuthManager : MonoBehaviour
             {
                 feedbackText.text = "Server Error!";
             }
-            else if (www.responseCode == 401) // Kullanýcý adý veya þifre hatalý
+            else if (www.responseCode == 401) // Invalid username or password
             {
                 feedbackText.text = "Invalid username or password!";
             }
@@ -123,24 +135,29 @@ public class AuthManager : MonoBehaviour
                 feedbackText.text = "Login Successful!";
                 StoreToken(jsonResponse.token);
                 StoreUsername(jsonResponse.username);
-                WebSocketClient.Instance.StartWebSocketConnection(); // WebSocket baðlantýsýný baþlat
+
+                // Start WebSocket connection
+                WebSocketClient.Instance.StartWebSocketConnection();
                 ShowChatUI();
             }
         }
     }
 
+    // Store JWT token
     void StoreToken(string token)
     {
         PlayerPrefs.SetString("userToken", token);
         PlayerPrefs.Save();
     }
 
+    // Store username
     void StoreUsername(string username)
     {
         PlayerPrefs.SetString("username", username);
         PlayerPrefs.Save();
     }
 
+    // Show login UI
     void ShowLoginUI()
     {
         registerPanel?.SetActive(false);
@@ -149,12 +166,14 @@ public class AuthManager : MonoBehaviour
         ClearFeedbackText();
     }
 
+    // Show chat UI
     void ShowChatUI()
     {
         loginPanel?.SetActive(false);
         chatPanel?.SetActive(true);
     }
 
+    // Show register UI
     void ShowRegisterUI()
     {
         loginPanel?.SetActive(false);
@@ -162,6 +181,7 @@ public class AuthManager : MonoBehaviour
         ClearFeedbackText();
     }
 
+    // Clear feedback text
     void ClearFeedbackText()
     {
         registerFeedbackText.text = "";
