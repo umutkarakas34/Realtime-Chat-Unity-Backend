@@ -20,6 +20,7 @@ interface IUser {
 const app = express();
 const port = 3000;
 const wsUrl = "ws://localhost:3000";
+const jwtSecret = process.env.JWT_SECRET || 'defaultSecret'; // Güvenlik için çevresel değişken kullanın
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -103,7 +104,6 @@ wss.on('connection', (ws: WebSocket) => {
     ws.on('error', (error) => {
         console.log('WebSocket error: ', error);
         setTimeout(() => {
-            console.log('Attempting to reconnect...');
             connectWebSocket();
         }, 5000);
     });
@@ -143,7 +143,6 @@ function connectWebSocket() {
     ws.on('close', () => {
         console.log('Client disconnected');
         setTimeout(() => {
-            console.log('Attempting to reconnect...');
             connectWebSocket();
         }, 5000);
     });
@@ -151,7 +150,6 @@ function connectWebSocket() {
     ws.on('error', (error) => {
         console.log('WebSocket error: ', error);
         setTimeout(() => {
-            console.log('Attempting to reconnect...');
             connectWebSocket();
         }, 5000);
     });
@@ -186,7 +184,7 @@ app.post('/login', async (req: Request, res: Response) => {
             return res.status(401).send('Invalid credentials');
         }
 
-        const token = jwt.sign({ username }, 'secret', { expiresIn: '1h' });
+        const token = jwt.sign({ username }, jwtSecret, { expiresIn: '1h' });
         res.json({ token, username });
     } catch (err) {
         console.error('Error logging in:', err);
@@ -203,7 +201,7 @@ app.get('/username', async (req: Request, res: Response) => {
     }
 
     try {
-        const decoded = jwt.verify(token, 'secret') as { username: string };
+        const decoded = jwt.verify(token, jwtSecret) as { username: string };
         res.json({ username: decoded.username });
     } catch (err) {
         console.error('Error verifying token:', err);
